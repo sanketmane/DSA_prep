@@ -9,10 +9,10 @@ for i in A:
   freq_arr[i] += 1
 
 k = 0
-for i in range(len(freq_arr)):
-  for j in range(freq_arr[i]):
-    A[k] = i
-    k += 1
+for i in range(len(freq_arr)): # loop over the freq_arr indices
+  for j in range(freq_arr[i]): # loop over the index frequency
+    A[k] = i # update original array based on index frequency
+    k += 1 # this will move the index in the original array.
 
 
 # count sort for negative nums
