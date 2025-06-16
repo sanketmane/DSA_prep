@@ -1,0 +1,67 @@
+Q: You are managing a pet shelter, where each animal is classified into one of three categories: 0 (Dogs), 1 (Cats), or 2 (Birds). The animals at the shelter are represented by an array A of length N, where each element corresponds to the type of animal.
+A “Nice Subarray” is defined as a subarray of animals that contains at least one dog, one cat, and one bird. Your task is to count how many “Nice Subarray” can be identified from the animals in the shelter.
+
+Input:
+1. A = [0, 1, 2, 0]
+2. A = [0, 1, 0, 0, 2]
+
+Output:
+1. 3 ([0,1,2], [1,2,0], [0,1,2,0])
+2. 2 ([0,1,0,0,2], [1,0,0,2])
+
+Solution:
+We will use Sliding Window approach here.
+The key here is in question:
+1. Array will contain only 0,1,2
+2. You need to find subarrays containing any number of 0,1,2 but each subarray should contain atleast 1 count of 0,1,2
+
+def count_nice_subarrays(A):
+    n = len(A)
+    result = 0
+    left = 0
+    count = {0: 0, 1: 0, 2: 0}
+
+    for right in range(n):
+        # Increment count for current element
+        if A[right] in count:
+            count[A[right]] += 1
+
+        # Once we have at least one of each (0,1,2)
+        while count[0] > 0 and count[1] > 0 and count[2] > 0:
+            # For each valid window [left, right],
+            # we can extend it to include any elements to the right
+            # So we add (n - right) subarrays to our result
+            result += n - right # derived from (n-1)-right+1, standard formula b-a+1
+
+            # Shrink window from left
+            count[A[left]] -= 1
+            left += 1
+
+    return result
+
+Explanation:
+Suppose we have the array [1,1,1,0,2,2,0,2,1] and we're using the sliding window approach.
+
+When our window first contains all three required elements (0, 1, and 2), let's say:
+
+left pointer is at index 0
+right pointer is at index 4 (where we just added a 2)
+At this point, we have a valid window from index 0 to 4: [1,1,1,0,2]
+
+Now comes the key insight: any subarray that starts at index 0 and ends at index 4 or beyond will be valid (contain 0, 1, and 2).
+
+How many such subarrays are there? We can end at:
+
+index 4: [1,1,1,0,2]
+index 5: [1,1,1,0,2,2]
+index 6: [1,1,1,0,2,2,0]
+index 7: [1,1,1,0,2,2,0,2]
+index 8: [1,1,1,0,2,2,0,2,1]
+That's n - right subarrays = 9 - 4 = 5 subarrays.
+
+Then we shrink the window (move left forward) and check if we still have a valid window. If yes, we again add n - right subarrays to our count.
+
+This pattern continues for each valid window we find, allowing us to count all possible nice subarrays efficiently in a single pass.
+
+The formula n - right gives us the number of possible ending positions for a valid subarray that starts at the current left position.
+
